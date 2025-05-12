@@ -1,5 +1,5 @@
-name: wxWidgets OSX Build
-# This workflow will build the wxWidgets library for OSX using CMake and Conan
+name: wxWidgets Windows Build
+# This workflow will build the wxWidgets library for Windows using CMake and Conan
 
 #on:
 #  release:
@@ -14,7 +14,7 @@ env:
 jobs:
   build:
     # runs-on: macos-15
-    runs-on: macos-15
+    runs-on: windows-2022
 
     steps:
     - uses: actions/checkout@v2
