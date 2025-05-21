@@ -37,6 +37,6 @@ jobs:
       run: |
         conan remote add gitlab https://gitlab.com/api/v4/packages/conan -f
         conan user ta-lu-cien -r gitlab -p ${{ secrets.GITLAB_UPLOAD_PWD }}
-        conan install terranum-conan+mariadb/stable --build=missing
+        conan install mariadb/10.6.22@terranum-conan+mariadb/stable --build=missing
         conan upload mariadb/10.6.22@terranum-conan+mariadb/stable --remote=gitlab -q 'build_type=Release' 
 
