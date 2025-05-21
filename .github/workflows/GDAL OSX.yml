@@ -37,6 +37,6 @@ jobs:
       run: |
         conan remote add gitlab https://gitlab.com/api/v4/packages/conan -f
         conan user ta-lu-cien -r gitlab -p ${{ secrets.GITLAB_UPLOAD_PWD }}
-        conan install gdal/3.8.3@terranum-conan+gdal/stable -o gdal:with_curl=True -o gdal:shared=True --build=missing
-        conan upload wxpdfdocument/1.3.1@terranum-conan+wxpdfdocument/stable --remote=gitlab -q 'build_type=Release' 
+        conan install gdal/3.10.3@terranum-conan+gdal/stable -o gdal:with_curl=True -o gdal:shared=True --build=missing
+        conan upload gdal/3.10.3@terranum-conan+gdal/stable --remote=gitlab -q 'build_type=Release' 
 
