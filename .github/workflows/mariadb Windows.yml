@@ -52,7 +52,8 @@ jobs:
       shell: bash
       run: |
         pwd
-        ls 
+        ls
+        cd mariadb-main 
         conan source . --source-folder=_bin/source
         conan install . --install-folder=_bin/build
         conan build . --source-folder=_bin/source --build-folder=_bin/build
