@@ -43,6 +43,7 @@ jobs:
       shell: bash
       run: |
         curl -LO https://gitlab.com/terranum-conan/mariadb/-/archive/main/mariadb-main.zip
+        ls 
         7z x mariadb-main.zip mariadb
         ls
         cd mariadb
