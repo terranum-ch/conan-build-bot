@@ -42,11 +42,9 @@ jobs:
     - name: download mariadb
       shell: bash
       run: |
-        curl -LO https://gitlab.com/terranum-conan/mariadb/-/archive/main/mariadb-main.zip
+        curl -LO https://gitlab.com/terranum-conan/mariadb/-/archive/main/mariadb-main.tar.gz
         ls 
-        7z x mariadb-main.zip mariadb
-        ls
-        cd mariadb
+        tar -zxvf mariadb-main.tar.bz
         ls
         cd mariadb-main
     
