@@ -55,7 +55,7 @@ jobs:
         ls
         cd mariadb-main 
         conan source . --source-folder=_bin/source
-        conan install . --install-folder=_bin/build
+        conan install . --install-folder=_bin/build --build=missing
         conan build . --source-folder=_bin/source --build-folder=_bin/build
         conan package . --source-folder=_bin/source --build-folder=_bin/build --package-folder=_bin/package
         conan export-pkg . terranum-conan+mariadb/stable --source-folder=_bin/source --build-folder=_bin/build
