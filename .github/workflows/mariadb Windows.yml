@@ -44,7 +44,7 @@ jobs:
       run: |
         curl -LO https://gitlab.com/terranum-conan/mariadb/-/archive/main/mariadb-main.tar.gz
         ls 
-        tar -zxvf mariadb-main.tar.bz
+        tar -zxvf mariadb-main.tar.gz
         ls
         cd mariadb-main
     
