@@ -34,10 +34,27 @@ jobs:
       run: |
         conan remote add gitlab https://gitlab.com/api/v4/packages/conan -f
         conan user ta-lu-cien -r gitlab -p ${{ secrets.GITLAB_UPLOAD_PWD }}
+      
+    - name: download mariadb
+      shell: bash
+      run: |
+        curl -LO https://gitlab.com/terranum-conan/mariadb/-/archive/main/mariadb-main.tar.gz
+        ls 
+        tar -zxvf mariadb-main.tar.gz
+        ls
+        cd mariadb-main
+    
+    - name: Build mariadb
+      shell: bash
+      run: |
+        pwd
+        ls
+        cd mariadb-main 
         conan source . --source-folder=_bin/source
         conan install . --install-folder=_bin/build --build=missing
         conan build . --source-folder=_bin/source --build-folder=_bin/build
         conan package . --source-folder=_bin/source --build-folder=_bin/build --package-folder=_bin/package
         conan export-pkg . terranum-conan+mariadb/stable --source-folder=_bin/source --build-folder=_bin/build
-        conan upload mariadb/10.6.22@terranum-conan+mariadb/stable --remote=gitlab -q 'build_type=Release' 
+        conan test test_package mariadb/10.6.22@terranum-conan+mariadb/stable
+        conan upload mariadb/10.6.22@terranum-conan+mariadb/stable --remote=gitlab -q 'build_type=Release'  
     
