@@ -35,6 +35,29 @@ jobs:
       run: |
         conan remote add gitlab https://gitlab.com/api/v4/packages/conan -f
         conan user ta-lu-cien -r gitlab -p ${{ secrets.GITLAB_UPLOAD_PWD }}
-        conan install wxwidgets/3.3.0@terranum-conan+wxwidgets/stable --build=missing
-        conan upload wxwidgets/3.3.0@terranum-conan+wxwidgets/stable --remote=gitlab -q 'build_type=Release'
+      # one step build is not working, so we need to build it in two steps
+      # conan install wxwidgets/3.3.0@terranum-conan+wxwidgets/stable --build=missing
+      # conan upload wxwidgets/3.3.0@terranum-conan+wxwidgets/stable --remote=gitlab -q 'build_type=Release'
+
+    - name: download wxwidgets
+      shell: bash
+      run: |
+        curl -LO https://gitlab.com/terranum-conan/wxwidgets/-/archive/main/wxwidgets-main.tar.gz
+        ls 
+        tar -zxvf wxwidgets-main.tar.gz
+        ls
+        cd wxwidgets-main
+    
+    - name: Build wxwidgets
+      shell: bash
+      run: |
+        pwd
+        ls
+        cd wxwidgets-main 
+        conan source . --source-folder=_bin
+        conan install . --install-folder=_bin --build=missing
+        conan build . --source-folder=_bin --build-folder=_bin
+        conan export-pkg . terranum-conan+wxwidgets/stable --source-folder=_bin --build-folder=_bin
+        conan test test_package wxwidgets/3.3.0@terranum-conan+wxwidgets/stable
+        conan upload wxwidgets/3.3.0@terranum-conan+wxwidgets/stable --remote=gitlab -q 'build_type=Release'  
 
