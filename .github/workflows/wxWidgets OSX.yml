@@ -35,6 +35,6 @@ jobs:
       run: |
         conan remote add gitlab https://gitlab.com/api/v4/packages/conan -f
         conan user ta-lu-cien -r gitlab -p ${{ secrets.GITLAB_UPLOAD_PWD }}
-        conan install wxwidgets/3.3.0@terranum-conan+wxwidgets/stable --build=missing
-        conan upload wxwidgets/3.3.0@terranum-conan+wxwidgets/stable --remote=gitlab -q 'build_type=Release' 
+        conan install wxwidgets/3.3.1@terranum-conan+wxwidgets/stable --build=missing
+        conan upload wxwidgets/3.3.1@terranum-conan+wxwidgets/stable --remote=gitlab -q 'build_type=Release' 
 
