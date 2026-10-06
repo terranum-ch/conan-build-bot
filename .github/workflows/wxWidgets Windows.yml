@@ -1,63 +1,63 @@
 name: wxWidgets Windows Build
-# This workflow will build the wxWidgets library for Windows using CMake and Conan
 
-#on:
-#  release:
-#    types: [created]
+on: [push, workflow_dispatch]
 
-on: [push]
+permissions:
+  contents: read
 
 env:
-  BUILD_TYPE: Release
+  WXWIDGETS_VERSION: "3.3.3"
+  CONAN_PROFILE: windows-x86_64-msvc194-release
+  CONAN_NON_INTERACTIVE: "1"
+  # Package registry of terranum-conan/wxwidgets (project ID 31464226).
+  GITLAB_CONAN_URL: https://gitlab.com/api/v4/projects/31464226/packages/conan
 
 jobs:
   build:
     runs-on: windows-2022
+    defaults:
+      run:
+        shell: bash
 
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+      - uses: actions/checkout@v4
 
-    - name: Set up Python "3.12"
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.12"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-    - name: Install Conan
-      run: |
-        python -m pip install --upgrade pip
-        pip install wheel conan==1.*
+      - name: Install Conan 2 and repository profiles
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "conan>=2,<3"
+          conan config install https://gitlab.com/terranum-conan/conan-profile.git
+          conan profile show -pr:h="$CONAN_PROFILE" -pr:b="$CONAN_PROFILE"
 
-    - name: Install Conan Libraries
-      shell: bash
-      #working-directory: ${{github.workspace}}/build
-      run: |
-        conan remote add gitlab https://gitlab.com/api/v4/packages/conan -f
-        conan user ta-lu-cien -r gitlab -p ${{ secrets.GITLAB_UPLOAD_PWD }}
-      # one step build is not working, so we need to build it in two steps
-      # conan install wxwidgets/3.3.0@terranum-conan+wxwidgets/stable --build=missing
-      # conan upload wxwidgets/3.3.0@terranum-conan+wxwidgets/stable --remote=gitlab -q 'build_type=Release'
+      - name: Configure GitLab package registry
+        env:
+          CONAN_LOGIN_USERNAME_GITLAB: ta-lu-cien
+          CONAN_PASSWORD_GITLAB: ${{ secrets.GITLAB_UPLOAD_PWD }}
+        run: |
+          conan remote add gitlab "$GITLAB_CONAN_URL" --force
+          conan remote login gitlab "$CONAN_LOGIN_USERNAME_GITLAB" -p "$CONAN_PASSWORD_GITLAB"
 
-    - name: download wxwidgets
-      shell: bash
-      run: |
-        curl -LO https://gitlab.com/terranum-conan/wxwidgets/-/archive/main/wxwidgets-main.tar.gz
-        ls 
-        tar -zxvf wxwidgets-main.tar.gz
-        ls
-        cd wxwidgets-main
-    
-    - name: Build wxwidgets
-      shell: bash
-      run: |
-        pwd
-        ls
-        cd wxwidgets-main 
-        conan source . --source-folder=_bin
-        conan install . --install-folder=_bin --build=missing
-        conan build . --source-folder=_bin --build-folder=_bin
-        conan export-pkg . terranum-conan+wxwidgets/stable --source-folder=_bin --build-folder=_bin
-        conan test test_package wxwidgets/3.3.1@terranum-conan+wxwidgets/stable
-        conan upload wxwidgets/3.3.1@terranum-conan+wxwidgets/stable --remote=gitlab -q 'build_type=Release'  
+      - name: Download wxWidgets Conan 2 recipe
+        run: git clone --depth 1 https://gitlab.com/terranum-conan/wxwidgets.git wxwidgets
 
+      - name: Build and test wxWidgets
+        working-directory: wxwidgets
+        run: |
+          conan create . \
+            --version="$WXWIDGETS_VERSION" \
+            --user=terranum-conan \
+            --channel=stable \
+            --build=missing \
+            -pr:h="$CONAN_PROFILE" \
+            -pr:b="$CONAN_PROFILE"
+
+      - name: Upload wxWidgets recipe and binaries to GitLab
+        env:
+          CONAN_LOGIN_USERNAME_GITLAB: ta-lu-cien
+          CONAN_PASSWORD_GITLAB: ${{ secrets.GITLAB_UPLOAD_PWD }}
+        run: conan upload "wxwidgets/$WXWIDGETS_VERSION@terranum-conan/stable" --remote=gitlab --confirm
