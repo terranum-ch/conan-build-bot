@@ -14,6 +14,7 @@ env:
   DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
   CC: /usr/bin/clang
   CXX: /usr/bin/clang++
+  CONAN_LOCK: conan-macos.lock
 
 jobs:
   build:
@@ -62,7 +63,8 @@ jobs:
             --version="$WXPDFDOCUMENT_VERSION" \
             --user=terranum-conan \
             --channel=stable \
-            --build=missing \
+            --lockfile="$CONAN_LOCK" \
+            --build='missing:wxpdfdocument/*' \
             -pr:h="$CONAN_PROFILE" \
             -pr:b="$CONAN_PROFILE"
 

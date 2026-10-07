@@ -11,6 +11,7 @@ env:
   CONAN_NON_INTERACTIVE: "1"
   # Package registry of terranum-conan/wxwidgets (project ID 33297719).
   GITLAB_CONAN_URL: https://gitlab.com/api/v4/projects/33297719/packages/conan
+  CONAN_LOCK: conan-windows.lock
 
 jobs:
   build:
@@ -52,7 +53,8 @@ jobs:
             --version="$WXPDFDOCUMENT_VERSION" \
             --user=terranum-conan \
             --channel=stable \
-            --build=missing \
+            --lockfile="$CONAN_LOCK" \
+            --build='missing:wxpdfdocument/*' \
             -pr:h="$CONAN_PROFILE" \
             -pr:b="$CONAN_PROFILE"
 
