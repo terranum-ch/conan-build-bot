@@ -64,7 +64,7 @@ jobs:
             --user=terranum-conan \
             --channel=stable \
             --lockfile="$CONAN_LOCK" \
-            --build='missing:wxpdfdocument/*' \
+            --build='missing' \
             -pr:h="$CONAN_PROFILE" \
             -pr:b="$CONAN_PROFILE"
 
